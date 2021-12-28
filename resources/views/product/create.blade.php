@@ -20,7 +20,6 @@
                             <x-input label="Product Stock" type="number" name="stock" ></x-input>
                         </div>
                     </div>
-                    <x-input label="Feature Image" type="file" name="feature_image" ></x-input>
                     <x-text-area label="Product Description" name="description" row="20"></x-text-area>
                     <div class="d-flex align-items-end justify-content-between">
                         <div class="form-check form-switch">
@@ -54,6 +53,8 @@
                     <p class="invalid-feedback small">{{ $message }}</p>
                     @enderror
                 </div>
+
+                <x-input label="Feature Image" type="file" form="productCreate" name="feature_image" ></x-input>
 
                 <div class="mb-3">
                     <label class="form-label">Product Images</label>

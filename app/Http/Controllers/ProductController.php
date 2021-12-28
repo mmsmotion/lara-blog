@@ -4,7 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Models\CategoryProduct;
+use App\Models\Info;
+use App\Models\Photo;
 use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -15,7 +21,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        return view('product.index');
     }
 
     /**
@@ -48,9 +54,43 @@ class ProductController extends Controller
             "photo.*" => "mimes:jpg,png"
         ]);
 
+        // store feature image
+        $featureImg = $request->file('feature_image');
+        $newFeatureImageName = uniqid()."_feature_image.".$featureImg->extension();
+        $featureImg->storeAs("public/feature_image",$newFeatureImageName);
+
+        $product = new Product();
+        $product->title = $request->title;
+        $product->slug = Str::slug($request->title);
+        $product->price = $request->price;
+        $product->stock = $request->stock;
+        $product->description = $request->description;
+        $product->excerpt = Str::words(50,$request->description);
+        $product->feature_image = $newFeatureImageName;
+        $product->user_id = Auth::id();
+        $product->save();
 
 
-        return $request;
+        foreach ($request->category as $category){
+            $cp = new CategoryProduct();
+            $cp->category_id = $category;
+            $cp->product_id = $product->id;
+            $cp->save();
+        }
+
+
+        foreach ($request->file('photo') as $photo){
+            $newName = uniqid()."_photo.".$photo->extension();
+            $photo->storeAs("public/product_photo/",$newName);
+            $photo = new Photo();
+            $photo->name = $newName;
+            $photo->product_id = $product->id;
+            $photo->user_id = Auth::id();
+            $photo->save();
+        }
+
+
+        return redirect()->route('product.index')->with('toast',Info::showToast('success','New Product Added'));
     }
 
     /**

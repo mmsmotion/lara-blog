@@ -19,10 +19,16 @@
         </li>
 
         <li>
-            <x-side-bar-title>Blog Manager</x-side-bar-title>
+            <x-side-bar-title>Product Manager</x-side-bar-title>
         </li>
         <li>
             <x-side-bar-link name="Category Manager" link="{{ route('category.create') }}" class="fas fa-layer-group"></x-side-bar-link>
+        </li>
+        <li>
+            <x-side-bar-link name="Create Product" link="{{ route('product.create') }}" class="fas fa-plus-circle"></x-side-bar-link>
+        </li>
+        <li>
+            <x-side-bar-link name="Product List" link="{{ route('product.index') }}" class="fas fa-list"></x-side-bar-link>
         </li>
         <li>
             <x-side-bar-spacer></x-side-bar-spacer>
