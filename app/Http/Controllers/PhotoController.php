@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePhotoRequest;
 use App\Http\Requests\UpdatePhotoRequest;
 use App\Models\Photo;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class PhotoController extends Controller
 {
@@ -36,7 +38,18 @@ class PhotoController extends Controller
      */
     public function store(StorePhotoRequest $request)
     {
-        //
+//        return $request;
+        foreach ($request->file('photo') as $photo){
+            $newName = uniqid()."_photo.".$photo->extension();
+            $photo->storeAs("public/product_photo/",$newName);
+            $photo = new Photo();
+            $photo->name = $newName;
+            $photo->product_id = $request->product_id;
+            $photo->user_id = Auth::id();
+            $photo->save();
+        }
+
+        return redirect()->back();
     }
 
     /**
@@ -81,6 +94,8 @@ class PhotoController extends Controller
      */
     public function destroy(Photo $photo)
     {
-        //
+        Storage::delete("public/product_photo/".$photo->name);
+        $photo->delete();
+        return redirect()->back();
     }
 }

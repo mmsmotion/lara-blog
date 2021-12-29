@@ -21,7 +21,10 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return view('product.index');
+        $products = Product::with(['photos','user','categories'])->get();
+
+//        return $products;
+        return view('product.index',compact('products'));
     }
 
     /**
@@ -65,7 +68,7 @@ class ProductController extends Controller
         $product->price = $request->price;
         $product->stock = $request->stock;
         $product->description = $request->description;
-        $product->excerpt = Str::words(50,$request->description);
+        $product->excerpt = Str::words($request->description,30);
         $product->feature_image = $newFeatureImageName;
         $product->user_id = Auth::id();
         $product->save();
@@ -101,7 +104,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        //
+        return $product;
     }
 
     /**
@@ -112,7 +115,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        //
+        return view('product.edit',compact('product'));
     }
 
     /**
